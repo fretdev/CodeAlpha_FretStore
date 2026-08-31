@@ -1,0 +1,32 @@
+{
+  "name": "codealpha_fretstore",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/fretdev/CodeAlpha_FretStore#readme",
+  "bugs": {
+    "url": "https://github.com/fretdev/CodeAlpha_FretStore/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fretdev/CodeAlpha_FretStore.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "node-pg-migrate": "^9.0.0",
+    "nodemon": "^3.1.14"
+  }
+}
