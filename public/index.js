@@ -10,7 +10,7 @@ loginform.addEventListener('submit',(event)=>{
     const username = usernameInput.value
     const password = passwordInput.value
     
-        fetch("http://localhost:5000/form",{
+        fetch('/form',{
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
