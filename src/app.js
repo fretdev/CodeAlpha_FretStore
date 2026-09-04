@@ -10,4 +10,5 @@ app.use(express.static("public"))
 app.use("/api/products",getProductsRouter)
 
 
+
 export default app
