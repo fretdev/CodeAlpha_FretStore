@@ -1,5 +1,6 @@
 import express from 'express'
-import getProductsRouter from "./routes/products.routes.js"
+import productsRouter from "./routes/products.routes.js"
+import categoriesRouter from "./routes/categories.routes.js"
 
 const app = express()
 
@@ -7,7 +8,9 @@ app.use(express.json())
 app.use(express.static("public"))
 
 
-app.use("/api/products",getProductsRouter)
+app.use("/api/products",productsRouter)
+
+app.use("/api/categories",categoriesRouter)
 
 
 
