@@ -1,4 +1,6 @@
+import { success } from "zod"
 import { registerSchema,loginSchema } from "../validators/auth.validator.js"
+import { addCartItemSchema, cartItemIdSchema, updateCartItemSchema } from "../validators/cart.validator.js"
 
 export const validateRegister = (req,res,next) =>{
     const result = registerSchema.safeParse(req.body)
@@ -21,5 +23,42 @@ export const validateLogin = (req,res,next) =>{
             errors: result.error.issues
         })
     }
+    next()
+}
+
+export const validateAddCartItem = (req,res,next) => {
+    const result = addCartItemSchema.safeParse(req.body)
+
+    if(!result.success){
+        return res.status(400).json({
+            message: "Invalid cart item data",
+            errors: result.error.issues
+        })
+    }
+    next()
+}
+
+export const validateUpdateCartItem = (req,res,next) => {
+    const result = updateCartItemSchema.safeParse(req.body)
+
+    if(!result.success){
+        return res.status(400).json({
+            message: "Invalid cart item data",
+            errors: result.error.issues
+        })
+    }
+    next()
+}
+
+export const validateCartItemId = (req,res,next) => {
+    const result = cartItemIdSchema.safeParse(req.params.id)
+
+    if(!result.success){
+        return res.status(400).json({
+            message: "Invalid cart item ID",
+            errors: result.error.issues
+        })
+    }
+    req.params.id = result.data
     next()
 }

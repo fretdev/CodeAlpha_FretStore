@@ -42,7 +42,7 @@ export const addToCart = async (userId,productId,quantity) => {
             SELECT id
             FROM carts
             WHERE user_id = $1
-        `[userId])
+        `,[userId])
 
     let cart = cartResult.rows[0]
 
@@ -55,4 +55,95 @@ export const addToCart = async (userId,productId,quantity) => {
         cart = cartResult.rows[0]
     }
    
+    const existingItemResult = await pool.query(`
+            SELECT id,quantity
+            FROM cart_items
+            WHERE cart_id = $1
+            AND product_id = $2;
+        `,[cart.id,productId])
+
+    const existingItem = existingItemResult.rows[0]
+
+    if(existingItem){
+        const newQuantity = existingItem.quantity + quantity
+
+        if(newQuantity > product.stock_quantity){
+            throw new Error("Insufficient stock")
+        }
+
+        const result = await pool.query(`
+                UPDATE cart_items
+                SET quantity = $1
+                WHERE id = $2
+                RETURNING *;
+            `,[newQuantity,existingItem.id])
+
+        return result.rows[0]
+    }
+
+    const result = await pool.query(`
+            INSERT INTO cart_items (cart_id,product_id,quantity)
+            VALUES ($1,$2,$3)
+            RETURNING *;
+        `,[cart.id,productId,quantity])
+
+    return result.rows[0]
+}
+
+export const updateCartItem = async (userId,cartItemId,quantity) => {
+    const productIdResult = await pool.query(`
+            SELECT product_id
+            FROM cart_items
+            WHERE id =$1
+        `,[cartItemId])
+    const productIdRow = productIdResult.rows[0]
+    if(!productIdRow){
+        throw new Error("Cart item not found")
+    }
+
+    const productId = productIdRow.product_id
+
+    const productResult = await pool.query(`
+            SELECT id,name,stock_quantity
+            FROM products
+            WHERE id = $1
+        `,[productId])
+
+    const product = productResult.rows[0]
+
+        if(!product){
+            throw new Error("Product not found")
+        }
+        if(quantity > product.stock_quantity){
+            throw new Error("Insufficient Stock")
+        }
+
+    const result = await pool.query(`
+            UPDATE cart_items
+            SET quantity = $1
+            WHERE id = $2
+            AND cart_id IN (
+                SELECT id
+                FROM carts
+                WHERE user_id = $3
+            )
+            RETURNING *;
+        `,[quantity,cartItemId,userId])
+
+    return result.rows[0]
+}
+
+export const removeCartItem = async (userId,cartItemId) =>{
+    const result = await pool.query(`
+            DELETE FROM cart_items
+            WHERE id = $1
+            AND cart_id IN (
+                SELECT id
+                FROM carts
+                WHERE user_id = $2
+            )
+            RETURNING *
+        `,[cartItemId,userId])
+    
+    return result.rows[0]
 }
