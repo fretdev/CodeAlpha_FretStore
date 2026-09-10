@@ -1,0 +1,90 @@
+import pool from "../config/db.js"
+
+export const createOrder = async (userId) =>{
+    const client = await pool.connect()
+   try{
+        await client.query("BEGIN")
+
+        const  cartResult = await client.query(`
+            SELECT id
+            FROM carts
+            WHERE user_id = $1
+        `,[userId])
+
+        if(!cartResult.rows[0]){
+            throw new Error("Cart not found")
+        }
+        
+        const cartId = cartResult.rows[0].id
+
+       const cartItemsResult = await client.query(`
+            SELECT cart_items.product_id,cart_items.quantity,products.name,products.price,products.stock_quantity
+            FROM carts
+            JOIN cart_items
+                ON carts.id = cart_items.cart_id
+            JOIN products
+                ON cart_items.product_id = products.id
+            WHERE carts.id = $1
+        `,[cartId])
+
+       if(!cartItemsResult.rows[0]){
+            throw new Error("Cart is empty")
+       }
+
+       const totalAmount = cartItemsResult.rows.reduce(
+        (total,item)=>{
+            return total + (item.quantity * item.price)
+        },0
+       )
+
+       const orderResult = await client.query(`
+            INSERT into orders (user_id,total_amount)
+            VALUES ($1,$2)
+            RETURNING id;
+        `,[userId,totalAmount])
+
+        const orderId = orderResult.rows[0].id
+
+        const orderItems = cartItemsResult.rows.map((item)=>{
+            return {
+                order_id: orderId,
+                product_id: item.product_id,
+                product_name: item.name,
+                unit_price: item.price,
+                quantity: item.quantity
+            }
+        })
+        for(const item of orderItems){
+            await client.query(`
+                INSERT INTO order_items (order_id,product_id,product_name,unit_price,quantity)
+                VALUES ($1,$2,$3,$4,$5)
+                RETURNING id;
+            `,[item.order_id,item.product_id,item.product_name,item.unit_price,item.quantity])
+
+            const stockResult = await client.query(`
+                UPDATE products
+                SET stock_quantity = stock_quantity - $1
+                WHERE id = $2
+                AND  stock_quantity >= $1;
+            `,[item.quantity,item.product_id])
+
+            if(stockResult.rowCount === 0){
+                throw new Error("Insufficient stock")
+            }
+        }
+
+        await client.query(`
+                DELETE FROM cart_items
+                WHERE cart_id = $1
+            `,[cartId])
+        await client.query("COMMIT")
+        
+        return orderId
+   } catch(error){
+    await client.query("ROLLBACK")
+    console.error("Order failed",error.message)
+    throw error
+} finally{
+    client.release()
+}
+}
