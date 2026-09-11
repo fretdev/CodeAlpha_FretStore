@@ -88,3 +88,40 @@ export const createOrder = async (userId) =>{
     client.release()
 }
 }
+
+export const getOrdersByUserId = async (userId) =>{
+    const result = await pool.query(`
+            SELECT id,status,total_amount,created_at
+            FROM orders
+            WHERE user_id = $1
+            ORDER BY created_at DESC
+        `,[userId])
+    return result.rows
+}
+
+export const getOrderById = async (userId,orderId) =>{
+    const orderResult = await pool.query(`
+            SELECT id,status,total_amount,created_at
+            FROM orders
+            WHERE id = $1
+            AND user_id = $2
+        `,[orderId,userId])
+
+    const order = orderResult.rows[0]
+
+    if(!order){
+        return null
+    }
+
+    const itemsResult = await pool.query(`
+            SELECT product_id,product_name,unit_price,quantity
+            FROM order_items
+            WHERE order_id = $1
+            ORDER BY id
+        `,[orderId])
+
+    return {
+        ...order,
+        items: itemsResult.rows
+    }
+}
