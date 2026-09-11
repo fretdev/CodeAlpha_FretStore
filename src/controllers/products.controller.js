@@ -1,4 +1,4 @@
-import { getAllProducts,getProductById } from "../services/products.service.js";
+import { getAllProducts,getProductById,createProduct } from "../services/products.service.js";
 
 export const getProducts = async (req, res) => {
     try {
@@ -36,6 +36,24 @@ export const getProduct = async (req,res)=>{
 
         res.status(500).json({
             message: "Failed to fetch product"
+        })
+    }
+}
+
+export const createProductController = async (req,res)=>{
+    try{
+        const {categoryId,name,brand,description,price,stockQuantity,imageUrl} = req.body
+        
+        const product = await createProduct(categoryId,name,brand,description,price,stockQuantity,imageUrl)
+
+        res.status(201).json({
+            message: "Product created successfully",
+            productId: product
+        })
+    } catch(error){
+        console.error("Failed to create product:",error.message)
+        res.status(500).json({
+            message:"Failed to create product"
         })
     }
 }

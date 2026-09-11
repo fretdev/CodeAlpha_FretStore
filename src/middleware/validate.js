@@ -1,6 +1,6 @@
-import { success } from "zod"
 import { registerSchema,loginSchema } from "../validators/auth.validator.js"
 import { addCartItemSchema, cartItemIdSchema, updateCartItemSchema } from "../validators/cart.validator.js"
+import { createProductSchema } from "../validators/product.validator.js"
 
 export const validateRegister = (req,res,next) =>{
     const result = registerSchema.safeParse(req.body)
@@ -60,5 +60,18 @@ export const validateCartItemId = (req,res,next) => {
         })
     }
     req.params.id = result.data
+    next()
+}
+
+export const validateCreateProduct = (req,res,next) =>{
+    const result = createProductSchema.safeParse(req.body)
+
+    if(!result.success){
+        return res.status(400).json({
+            message: "Invalid product data",
+            errors: result.error.issues
+        })
+    }
+
     next()
 }
