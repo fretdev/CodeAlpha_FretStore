@@ -1,4 +1,4 @@
-import { getAllProducts,getProductById,createProduct,editProduct} from "../services/products.service.js";
+import { getAllProducts,getProductById,createProduct,editProduct, deleteProduct} from "../services/products.service.js";
 
 export const getProducts = async (req, res) => {
     try {
@@ -77,6 +77,28 @@ export const updateProductController = async (req,res) =>{
         console.error("Failed to update product:",error.message)
         res.status(500).json({
             message: "Failed to update product"
+        })
+    }
+}
+
+export const deleteProductController = async (req,res)=>{
+    try{
+        const productId = req.params.id
+
+        const result = await deleteProduct(productId)
+
+        if(result === 0){
+            return res.status(404).json({
+                message: "Product not found"
+            })
+        }
+        res.status(200).json({
+            message: "Product deleted successfully"
+        })
+    } catch(error){
+        console.error("Failed to delete product",error.message)
+        res.status(500).json({
+            message: "Failed to delete product"
         })
     }
 }

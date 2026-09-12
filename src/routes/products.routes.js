@@ -1,7 +1,7 @@
 import { authenticate } from "../middleware/authenticate.js"
 import { authorize } from "../middleware/authorize.js"
 import { validateCreateProduct, validateProductId, validateUpdateProduct } from "../middleware/validate.js"
-import { getProducts,getProduct,createProductController,updateProductController } from "../controllers/products.controller.js";
+import { getProducts,getProduct,createProductController,updateProductController, deleteProductController } from "../controllers/products.controller.js";
 
 
 import { Router } from "express";
@@ -25,5 +25,12 @@ router.patch('/:id',
     validateProductId,
     validateUpdateProduct,
     updateProductController
+)
+
+router.delete("/:id",
+    authenticate,
+    authorize("admin"),
+    validateProductId,
+    deleteProductController
 )
 export default router

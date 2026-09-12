@@ -94,3 +94,12 @@ export const editProduct = async (productId,updates)=>{
         `,values)
     return productResult.rowCount
 }
+
+
+export const deleteProduct = async (productId)=>{
+    const result = await pool.query(`
+            DELETE FROM products
+            WHERE id = $1
+        `,[productId])
+    return result.rowCount
+}
