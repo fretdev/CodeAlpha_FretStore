@@ -1,4 +1,4 @@
-import { getAllProducts,getProductById,createProduct } from "../services/products.service.js";
+import { getAllProducts,getProductById,createProduct,editProduct} from "../services/products.service.js";
 
 export const getProducts = async (req, res) => {
     try {
@@ -54,6 +54,29 @@ export const createProductController = async (req,res)=>{
         console.error("Failed to create product:",error.message)
         res.status(500).json({
             message:"Failed to create product"
+        })
+    }
+}
+
+export const updateProductController = async (req,res) =>{
+    try{
+        const productId = req.params.id
+        const updates = req.body
+
+        const result = await editProduct(productId,updates)
+        if(!result){
+            return res.status(404).json({
+                message: "Product not found"
+            })
+        }
+
+        res.status(200).json({
+            message: "Product updated successfully"
+        })
+    } catch(error){
+        console.error("Failed to update product:",error.message)
+        res.status(500).json({
+            message: "Failed to update product"
         })
     }
 }

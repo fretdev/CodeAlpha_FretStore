@@ -1,6 +1,6 @@
 import { registerSchema,loginSchema } from "../validators/auth.validator.js"
 import { addCartItemSchema, cartItemIdSchema, updateCartItemSchema } from "../validators/cart.validator.js"
-import { createProductSchema } from "../validators/product.validator.js"
+import { createProductSchema, updateProductSchema } from "../validators/product.validator.js"
 
 export const validateRegister = (req,res,next) =>{
     const result = registerSchema.safeParse(req.body)
@@ -73,5 +73,17 @@ export const validateCreateProduct = (req,res,next) =>{
         })
     }
 
+    next()
+}
+
+export const validateUpdateProduct = (req,res,next) =>{
+    const result = updateProductSchema.safeParse(req.body)
+
+    if(!result.success){
+        return res.status(400).json({
+            message: "Invalid product data",
+            errors: result.error.issues
+        })
+    }
     next()
 }

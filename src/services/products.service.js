@@ -50,12 +50,47 @@ export const createProduct = async(categoryId,name,brand,description,price,stock
     return productResult.rows[0].id
 }
 
-export const editProduct = async (productId,name,price,description,imageUrl,stockQuantity,category)=>{
-   const productResult = await pool.query(`
-        UPDATE products
-        SET name = $1,price = $2,description = $3,image_url = $4,stock_quantity = $5,category_id = $6
-        WHERE id = $7
-    `,[name,price,description,imageUrl,stockQuantity,category,productId])
+export const editProduct = async (productId,updates)=>{
+    let fields = []
+    let values = []
+    let index = 1
 
+    if(updates.name !== undefined){
+        fields.push(`name = $${index}`)
+        values.push(updates.name)
+        index++
+    }
+    if(updates.price !== undefined){
+        fields.push(`price = $${index}`)
+        values.push(updates.price)
+        index++
+    }
+    if(updates.description !== undefined){
+        fields.push(`description = $${index}`)
+        values.push(updates.description)
+        index++
+    }
+    if(updates.imageUrl !== undefined){
+        fields.push(`image_url = $${index}`)
+        values.push(updates.imageUrl)
+        index++
+    }
+    if(updates.stockQuantity !== undefined){
+        fields.push(`stock_quantity = $${index}`)
+        values.push(updates.stockQuantity)
+        index++
+    }
+    if(updates.categoryId !== undefined){
+        fields.push(`category_id = $${index}`)
+        values.push(updates.categoryId)
+        index++
+    }
+    values.push(productId)
+
+    const productResult = await pool.query(`
+            UPDATE products
+            SET ${fields.join(",")}
+            WHERE id = ${index}
+        `,values)
     return productResult.rowCount
 }
