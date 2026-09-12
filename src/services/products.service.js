@@ -90,7 +90,7 @@ export const editProduct = async (productId,updates)=>{
     const productResult = await pool.query(`
             UPDATE products
             SET ${fields.join(",")}
-            WHERE id = ${index}
+            WHERE id = $${index}
         `,values)
     return productResult.rowCount
 }

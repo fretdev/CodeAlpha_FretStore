@@ -1,6 +1,6 @@
 import { authenticate } from "../middleware/authenticate.js"
 import { authorize } from "../middleware/authorize.js"
-import { validateCreateProduct, validateUpdateProduct } from "../middleware/validate.js"
+import { validateCreateProduct, validateProductId, validateUpdateProduct } from "../middleware/validate.js"
 import { getProducts,getProduct,createProductController,updateProductController } from "../controllers/products.controller.js";
 
 
@@ -22,6 +22,7 @@ router.post("/",
 router.patch('/:id',
     authenticate,
     authorize("admin"),
+    validateProductId,
     validateUpdateProduct,
     updateProductController
 )

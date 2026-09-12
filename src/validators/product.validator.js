@@ -23,3 +23,5 @@ export const updateProductSchema = z.object({
         message: "At least one field must be provided"
     }
 )
+
+export const productIdSchema = z.coerce.number().int().positive()

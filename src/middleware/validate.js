@@ -1,6 +1,6 @@
 import { registerSchema,loginSchema } from "../validators/auth.validator.js"
 import { addCartItemSchema, cartItemIdSchema, updateCartItemSchema } from "../validators/cart.validator.js"
-import { createProductSchema, updateProductSchema } from "../validators/product.validator.js"
+import { createProductSchema, updateProductSchema,productIdSchema} from "../validators/product.validator.js"
 
 export const validateRegister = (req,res,next) =>{
     const result = registerSchema.safeParse(req.body)
@@ -85,5 +85,17 @@ export const validateUpdateProduct = (req,res,next) =>{
             errors: result.error.issues
         })
     }
+    next()
+}
+
+export const validateProductId = (req,res,next) =>{
+    const result = productIdSchema.safeParse(req.params.id)
+    if(!result.success){
+       return res.status(400).json({
+            message: "Invalid product ID",
+            errors: result.error.issues
+        })
+    }
+    req.params.id = result.data
     next()
 }
