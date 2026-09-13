@@ -1,4 +1,4 @@
-import { createOrder, getOrdersByUserId, getOrderById} from "../services/order.service.js";
+import { createOrder, getOrdersByUserId, getOrderById, getAllOrders, getAdminOrderById, updateOrderStatus} from "../services/order.service.js";
 
 export const createOrderController = async (req,res)=>{
     try{
@@ -62,6 +62,63 @@ export const getOrderByIdController = async (req,res)=>{
         console.error("Failed to retrieve order:",error.message)
         res.status(500).json({
             message: "Failed to retrieve order"
+        })
+    }
+}
+
+export const getAllOrdersController = async (req,res) =>{
+    try{
+        const orders = await getAllOrders()
+
+        res.status(200).json(orders)
+    } catch(error){
+        console.error("Failed to retrieve all orders:",error.message)
+        res.status(500).json({
+            message: "Failed to retrieve orders"
+        })
+    }
+}
+
+export const getAdminOrderByIdController = async (req,res)=>{
+    try{
+        const orderId = req.params.id
+
+        const order = await getAdminOrderById(orderId)
+        if(!order){
+            return res.status(404).json({
+                message: "Order not found"
+            })
+        }
+
+        res.status(200).json(order)
+    } catch(error){
+        console.error("Failed to retrieve order:",error.message)
+        res.status(500).json({
+            message: "Failed to retrieve order"
+        })
+    }
+}
+
+export const updateOrderStatusController = async (req,res)=>{
+    try{
+        const orderId = req.params.id
+        const status = req.body.status
+
+        const result = await updateOrderStatus(orderId,status)
+
+        if(result === 0){
+            return res.status(404).json({
+                message:"Order not found"
+            })
+        }
+
+        res.status(200).json({
+            message: "Order status updated successfully"
+        })
+    } catch(error){
+        console.error("Failed to update order status:",error.message)
+        res.status(500).json({
+            message:"Failed to update order status"
         })
     }
 }

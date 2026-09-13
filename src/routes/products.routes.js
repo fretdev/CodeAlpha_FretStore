@@ -1,7 +1,4 @@
-import { authenticate } from "../middleware/authenticate.js"
-import { authorize } from "../middleware/authorize.js"
-import { validateCreateProduct, validateProductId, validateUpdateProduct } from "../middleware/validate.js"
-import { getProducts,getProduct,createProductController,updateProductController, deleteProductController } from "../controllers/products.controller.js";
+import { getProducts,getProduct } from "../controllers/products.controller.js";
 
 
 import { Router } from "express";
@@ -12,25 +9,5 @@ router.get("/",getProducts)
 
 router.get("/:id",getProduct)
 
-router.post("/",
-    authenticate,
-    authorize("admin"),
-    validateCreateProduct,
-    createProductController
-)
 
-router.patch('/:id',
-    authenticate,
-    authorize("admin"),
-    validateProductId,
-    validateUpdateProduct,
-    updateProductController
-)
-
-router.delete("/:id",
-    authenticate,
-    authorize("admin"),
-    validateProductId,
-    deleteProductController
-)
 export default router

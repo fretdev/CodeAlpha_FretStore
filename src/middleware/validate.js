@@ -1,5 +1,6 @@
 import { registerSchema,loginSchema } from "../validators/auth.validator.js"
 import { addCartItemSchema, cartItemIdSchema, updateCartItemSchema } from "../validators/cart.validator.js"
+import { updateOrderStatusSchema } from "../validators/order.validator.js"
 import { createProductSchema, updateProductSchema,productIdSchema} from "../validators/product.validator.js"
 
 export const validateRegister = (req,res,next) =>{
@@ -97,5 +98,17 @@ export const validateProductId = (req,res,next) =>{
         })
     }
     req.params.id = result.data
+    next()
+}
+
+export const validateUpdateOrderStatus = (req,res,next)=>{
+    const result = updateOrderStatusSchema.safeParse(req.body)
+
+    if(!result.success){
+        res.status(400).json({
+            message: "Invalid status update",
+            errors: result.error.issues
+        })
+    }
     next()
 }

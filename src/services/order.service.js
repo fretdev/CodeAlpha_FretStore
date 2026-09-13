@@ -125,3 +125,50 @@ export const getOrderById = async (userId,orderId) =>{
         items: itemsResult.rows
     }
 }
+
+export const getAllOrders = async ()=>{
+    const result = await pool.query(`
+            SELECT  orders.id,orders.user_id,users.username,users.email,orders.status,orders.total_amount,orders.created_at
+            FROM orders
+            JOIN users
+                ON orders.user_id = users.id
+        `)
+    return result.rows
+}
+
+export const getAdminOrderById = async (orderId)=>{
+    const orderResult = await pool.query(`
+            SELECT orders.id,orders.user_id,users.username,users.email,orders.status,orders.total_amount,orders.created_at
+            FROM orders
+            JOIN users
+                ON orders.user_id = users.id
+            WHERE orders.id = $1
+        `,[orderId])
+    const order = orderResult.rows[0]
+    if(!order){
+        return null
+    }
+
+    const itemsResult = await pool.query(`
+            SELECT id,product_id,product_name,unit_price,quantity
+            FROM order_items
+            WHERE order_items.order_id = $1
+        `,[orderId])
+
+    const items = itemsResult.rows
+
+    return  {
+        order,
+        items
+    }
+}
+
+export const updateOrderStatus = async (orderId,status)=>{
+    const result = await pool.query(`
+            UPDATE orders
+            SET status = $1
+            WHERE orders.id = $2
+        `,[status,orderId])
+
+    return result.rowCount
+}
