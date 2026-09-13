@@ -1,4 +1,4 @@
-import { object, z } from "zod"
+import { z } from "zod"
 
 export const createProductSchema = z.object({
     categoryId: z.number().int().positive(),

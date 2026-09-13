@@ -1,7 +1,7 @@
 import {Router} from "express"
-import { authenticate } from "../middleware/authenticate.js"
-import { addCartItem, getCart, removeCartItemController, updateCartItemController } from "../controllers/cart.controller.js"
-import { validateAddCartItem, validateCartItemId, validateUpdateCartItem} from "../middleware/validate.js"
+import { authenticate } from "../../middleware/authenticate.js"
+import { addCartItem, getCart, removeCartItemController, updateCartItemController } from "./cart.controller.js"
+import { validateAddCartItem, validateCartItemId, validateUpdateCartItem} from "./cart.middleware.js"
 
 const router = Router ()
 

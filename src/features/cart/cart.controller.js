@@ -1,4 +1,4 @@
-import { getCartByUserId,addToCart,updateCartItem, removeCartItem } from "../services/cart.service.js";
+import { getCartByUserId,addToCart,updateCartItem, removeCartItem } from "./cart.service.js";
 
 export const getCart = async (req,res)=>{
     try{
