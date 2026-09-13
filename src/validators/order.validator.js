@@ -9,3 +9,5 @@ export const updateOrderStatusSchema = z.object({
         'cancelled'
     ])
 })
+
+export const orderIdSchema = z.coerce.number().int().positive()
