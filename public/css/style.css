@@ -284,11 +284,11 @@ h3,
   .nav-links-container.is-toggled{
     display: flex;
     flex-direction: column;
-    position: absolute;
+    position: fixed;
     top: 0;
     right: 0;
     width: 20rem;
-    height: 100vh;
+    height: 100rem;
     background: var(--color-surface-light);
     z-index: 10;
   }
@@ -308,8 +308,8 @@ h3,
     justify-content: space-between;
     gap: 4rem;
     z-index: 15;
-    position: absolute;
-    top: 33rem;
+    position: fixed;
+    top: 32rem;
     right: 0;
     background: var(--color-surface-light);
     width: 20rem;
@@ -337,9 +337,13 @@ h3,
   }
 }
 @media (max-width: 800px) {
+  #nav-bar{
+    width: 100vh;
+  }
+  .nav-links-container.is-toggled{
+    
+  }
   .nav-search{
     width: 20rem;
-    height: 3rem;
   }
-  
 }
