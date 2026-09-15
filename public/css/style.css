@@ -117,6 +117,10 @@ h3,
     font-size: 2rem;
     font-family: var(--font-display);
 }
+.nav-links-container{
+  width: 400px;
+  display: flex;
+}
 .nav-links{
     display: flex;
     list-style: none;
@@ -206,6 +210,12 @@ h3,
 .cart-link:hover .nav-cart-icon {
     transform: scale(1.08);      
 }
+.nav-btns{
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 1rem;
+  gap: 1rem;
+}
 .nav-btn {
     padding: 0.5rem 2rem;
     border-radius: 0.5rem;
@@ -239,9 +249,97 @@ h3,
     background: var(--color-primary-dark);
 }
 
+.menu-bar{
+  display: none;
+  background: transparent;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+}
+.bar{
+  display: block;
+  width: 25px;
+  height: 3px;
+  background: var(--color-accent);
+  margin: 5px auto;
+  transition: all 0.3s ease-in-out;
+}
 
 
-
-
-
-
+@media (max-width: 1150px) {
+  .menu-bar{
+    display: block;
+    z-index: 12;
+  }
+  .nav-btns{
+    display: none;
+  }
+  .nav-links-container{
+    display: none;
+  }
+  .nav-search{
+    width: 30rem;
+    height: 3rem;
+  }
+  .nav-links-container.is-toggled{
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20rem;
+    height: 100vh;
+    background: var(--color-surface-light);
+    z-index: 10;
+  }
+  .nav-links{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 2.5rem;
+    position: absolute;
+    top: 10rem;
+    right: 5rem;
+    gap: 5rem;
+  }
+  .nav-btns.is-toggled{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 4rem;
+    z-index: 15;
+    position: absolute;
+    top: 33rem;
+    right: 0;
+    background: var(--color-surface-light);
+    width: 20rem;
+  }
+  .nav-btn{
+    padding: 0.5rem 3rem;
+    font-size: 3rem;
+    text-align: center;
+  }
+  .login-btn{
+    margin-top: 3rem;
+    border: 2px solid var(--color-border);
+  }
+  .register-btn{
+    margin-bottom: 2rem;
+  }
+ .menu-bar.is-toggled .bar:nth-child(2){
+    opacity: 0;
+  }
+  .menu-bar.is-toggled .bar:nth-child(1){
+      transform: translateY(8px) rotate(45deg);
+  }
+  .menu-bar.is-toggled .bar:nth-child(3){
+      transform: translateY(-8px) rotate(-45deg);
+  }
+}
+@media (max-width: 800px) {
+  .nav-search{
+    width: 20rem;
+    height: 3rem;
+  }
+  
+}

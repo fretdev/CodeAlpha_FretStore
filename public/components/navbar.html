@@ -1,11 +1,13 @@
 <nav id="nav-bar">
     <a href="/" class="logo">FRET STORE</a>
-    <ul class="nav-links">
+   <div class="nav-links-container">
+     <ul class="nav-links">
         <li><a href="/" data-category="home" class="active">HOME</a></li>
         <li><a href="#" data-category="guitars">GUITARS</a></li>
         <li><a href="#" data-category="accessories">ACCESSORIES</a></li>
         <li><a href="#" data-category="amplifiers">AMPLIFIERS</a></li>
     </ul>
+   </div>
     <div class="search-wrapper">
         <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
@@ -20,6 +22,11 @@
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
     </a>
-    <a href="/pages/login.html" class="nav-btn login-btn">LOGIN</a>
-    <a href="/pages/register.html" class="nav-btn register-btn">REGISTER</a>
+    <button class="menu-bar">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    </button>
+   <div class="nav-btns">
+        <a href="/pages/login.html" class="nav-btn login-btn">LOGIN</a>
+        <a href="/pages/register.html" class="nav-btn register-btn">REGISTER</a>
+   </div>
 </nav>
