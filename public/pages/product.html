@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | FRET STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <div class="container" style="padding-top: var(--space-xl); padding-bottom: var(--space-3xl);">
+            <div style="margin-bottom: var(--space-lg);">
+                <a href="/" class="btn btn-outline btn-sm">&larr; BACK TO INSTRUMENTS</a>
+            </div>
+
+            <div class="loading-wrapper" id="product-loading">
+                <div class="spinner"></div>
+                <p>Loading instrument details...</p>
+            </div>
+
+            <div class="error-state" id="product-error" style="display: none;">
+                <h3 class="error-title" id="product-error-title">Instrument Not Found</h3>
+                <p class="error-text" id="product-error-msg">The instrument you are looking for may have been removed or does not exist.</p>
+                <a href="/" class="btn btn-outline">RETURN TO CATALOG</a>
+            </div>
+
+            <div class="product-detail-layout" id="product-detail-container" style="display: none;">
+                <div class="product-detail-gallery">
+                    <img src="" alt="" id="product-img" class="product-detail-img">
+                </div>
+
+                <div class="product-detail-info">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-2xs);">
+                        <span class="product-detail-brand" id="product-brand"></span>
+                        <span class="badge badge-gold" id="product-category"></span>
+                    </div>
+
+                    <h1 class="product-detail-title" id="product-title"></h1>
+                    
+                    <div class="product-detail-price" id="product-price"></div>
+
+                    <div style="margin-bottom: var(--space-md);" id="stock-badge-container"></div>
+
+                    <p class="product-detail-description" id="product-description"></p>
+
+                    <div class="product-detail-meta-list">
+                        <div class="meta-item">
+                            <span class="meta-label">Availability:</span>
+                            <span class="meta-value" id="product-stock-qty"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Category:</span>
+                            <span class="meta-value" id="product-cat-name"></span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Item ID:</span>
+                            <span class="meta-value" id="product-id-display"></span>
+                        </div>
+                    </div>
+
+                    <div id="purchase-controls">
+                        <label class="form-label" for="qty-input">Quantity:</label>
+                        <div class="quantity-control">
+                            <button type="button" class="qty-btn" id="qty-minus" aria-label="Decrease quantity">-</button>
+                            <input type="number" id="qty-input" class="qty-input" value="1" min="1" max="1" readonly>
+                            <button type="button" class="qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
+                        </div>
+
+                        <button type="button" class="btn btn-primary btn-lg btn-block" id="add-to-cart-btn">
+                            ADD TO CART
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/product.js"></script>
+</body>
+</html>

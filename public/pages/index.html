@@ -3,16 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fret Store</title>
+    <title>FRET STORE | Premium Guitars, Amplifiers & Accessories</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="navbar"></div>
-    
-    <script src="/js/components.js"></script>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-video-container">
+                <img 
+                    src="https://res.cloudinary.com/dx3rxok20/video/upload/so_2/v1789534851/video1_vikgv3.jpg" 
+                    alt="Fret Store Instruments" 
+                    class="hero-poster-fallback"
+                    fetchpriority="high"
+                >
+                <video 
+                    class="hero-video" 
+                    autoplay 
+                    muted 
+                    loop 
+                    playsinline 
+                    poster="https://res.cloudinary.com/dx3rxok20/video/upload/so_2/v1789534851/video1_vikgv3.jpg"
+                >
+                    <source src="https://res.cloudinary.com/dx3rxok20/video/upload/v1789534851/video1_vikgv3.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="hero-overlay"></div>
+
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-eyebrow">PREMIUM TONAL CRAFT</div>
+                    <h1 class="hero-title">FIND YOUR SOUND.</h1>
+                    <p class="hero-desc">
+                        World-class electric, acoustic, and bass guitars, studio-grade amplifiers, and performance accessories curated for musicians who refuse to compromise.
+                    </p>
+                    <div class="hero-ctas">
+                        <button type="button" class="btn btn-accent btn-lg" id="hero-shop-guitars-btn">SHOP GUITARS</button>
+                        <button type="button" class="btn btn-outline btn-lg" id="hero-shop-all-btn">EXPLORE CATALOG</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="trust-bar">
+            <div class="container">
+                <div class="trust-bar-grid">
+                    <div class="trust-item">
+                        <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        <div>
+                            <div class="trust-text-title">100% Authentic Gear</div>
+                            <div class="trust-text-sub">Genuine heritage from verified manufacturers</div>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        <div>
+                            <div class="trust-text-title">Pro Setup &amp; Inspection</div>
+                            <div class="trust-text-sub">Inspected and tuned prior to shipment</div>
+                        </div>
+                    </div>
+                    <div class="trust-item">
+                        <svg class="trust-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="1" y="3" width="15" height="13"></rect>
+                            <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                            <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                            <circle cx="18.5" cy="18.5" r="2.5"></circle>
+                        </svg>
+                        <div>
+                            <div class="trust-text-title">Insured Express Delivery</div>
+                            <div class="trust-text-sub">Secure packaging and door-to-door transit</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="catalog-section" id="catalog">
+            <div class="container" style="padding-top: var(--space-2xl); padding-bottom: var(--space-3xl);">
+                <div class="category-filter-bar" id="category-filter-bar" role="tablist" aria-label="Product Categories">
+                    <button type="button" class="filter-pill active" data-category="all">ALL INSTRUMENTS</button>
+                </div>
+
+                <div class="products-header">
+                    <div>
+                        <h2 id="catalog-heading">FEATURED INSTRUMENTS</h2>
+                        <span class="product-count" id="product-count">Loading instruments...</span>
+                    </div>
+                </div>
+
+                <div class="loading-wrapper" id="products-loading">
+                    <div class="spinner"></div>
+                    <p>Loading instruments...</p>
+                </div>
+
+                <div class="error-state" id="products-error" style="display: none;">
+                    <h3 class="error-title">Unable to load products</h3>
+                    <p class="error-text" id="products-error-msg">A connection error occurred while fetching the instrument catalog.</p>
+                    <button type="button" class="btn btn-outline" id="retry-products-btn">TRY AGAIN</button>
+                </div>
+
+                <div class="empty-state" id="products-empty" style="display: none;">
+                    <h3 class="empty-title">No products found</h3>
+                    <p class="empty-text">We couldn't find any instruments matching your search or selected category filter.</p>
+                    <button type="button" class="btn btn-outline" id="reset-filter-btn">CLEAR FILTERS</button>
+                </div>
+
+                <div class="products-grid" id="products-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/home.js"></script>
 </body>
 </html>

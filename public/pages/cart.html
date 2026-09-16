@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart | FRET STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <div class="container" style="padding-top: var(--space-2xl); padding-bottom: var(--space-3xl);">
+            <div class="products-header">
+                <div>
+                    <h1>SHOPPING CART</h1>
+                    <p class="product-count" id="cart-item-count">Review your selected instruments and gear</p>
+                </div>
+            </div>
+
+            <div class="loading-wrapper" id="cart-loading">
+                <div class="spinner"></div>
+                <p>Loading your cart...</p>
+            </div>
+
+            <div class="empty-state" id="cart-auth-required" style="display: none;">
+                <h3 class="empty-title">Please Log In</h3>
+                <p class="empty-text">You need to be logged into your Fret Store account to view and manage your shopping cart.</p>
+                <a href="/pages/login.html?redirect=/pages/cart.html" class="btn btn-primary btn-lg">LOG IN TO CONTINUE</a>
+            </div>
+
+            <div class="empty-state" id="cart-empty" style="display: none;">
+                <h3 class="empty-title">Your Cart is Empty</h3>
+                <p class="empty-text">Looks like you haven't added any guitars, amps, or accessories to your cart yet.</p>
+                <a href="/" class="btn btn-accent btn-lg">EXPLORE INSTRUMENTS</a>
+            </div>
+
+            <div class="error-state" id="cart-error" style="display: none;">
+                <h3 class="error-title">Unable to Load Cart</h3>
+                <p class="error-text" id="cart-error-msg">A problem occurred while retrieving your cart items.</p>
+                <button type="button" class="btn btn-outline" id="cart-retry-btn">TRY AGAIN</button>
+            </div>
+
+            <div class="cart-layout" id="cart-content" style="display: none;">
+                <div class="cart-items-container" id="cart-items-list"></div>
+
+                <aside class="order-summary-card">
+                    <h3 class="summary-heading">ORDER SUMMARY</h3>
+                    <div class="summary-row">
+                        <span>Items Subtotal</span>
+                        <span id="summary-subtotal">₦0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span style="color: var(--color-success);">Complimentary</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Taxes Included</span>
+                        <span>₦0.00</span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span id="summary-total">₦0.00</span>
+                    </div>
+
+                    <button type="button" class="btn btn-primary btn-lg btn-block" id="checkout-btn" style="margin-top: var(--space-xl);">
+                        PLACE ORDER
+                    </button>
+                    <p style="font-size: 0.8rem; color: var(--color-text-dim); text-align: center; margin-top: var(--space-sm);">
+                        Free insured door-to-door delivery on all orders.
+                    </p>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/cart.js"></script>
+</body>
+</html>

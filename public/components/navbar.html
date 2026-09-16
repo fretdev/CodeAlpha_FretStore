@@ -1,32 +1,74 @@
 <nav id="nav-bar">
     <a href="/" class="logo">FRET STORE</a>
-   <div class="nav-links-container">
-     <ul class="nav-links">
-        <li><a href="/" data-category="home" class="active">HOME</a></li>
-        <li><a href="#" data-category="guitars">GUITARS</a></li>
-        <li><a href="#" data-category="accessories">ACCESSORIES</a></li>
-        <li><a href="#" data-category="amplifiers">AMPLIFIERS</a></li>
-    </ul>
-   </div>
-    <div class="search-wrapper">
-        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+    <div class="nav-links-container">
+        <ul class="nav-links">
+            <li><a href="/" data-category="all">HOME</a></li>
+            <li><a href="/pages/index.html?category=guitars" data-category="guitars">GUITARS</a></li>
+            <li><a href="/pages/index.html?category=accessories" data-category="accessories">ACCESSORIES</a></li>
+            <li><a href="/pages/index.html?category=amplifiers" data-category="amplifiers">AMPLIFIERS</a></li>
+        </ul>
+    </div>
+
+    <form class="search-wrapper" id="nav-search-form" role="search" onsubmit="event.preventDefault();">
+        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
         </svg>
-        <input type="text" class="nav-search" placeholder="Search for products..."aria-label="Search for products">
-    </div>
-    <a href="/" class="cart-link" aria-label="View Shopping Cart">
-        <svg class="nav-cart-icon" xmlns="http://www.w3.org/2000/svg"viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <input type="search" class="nav-search" id="nav-search-input" placeholder="Search instruments, amps..." aria-label="Search instruments and gear" autocomplete="off">
+    </form>
+
+    <a href="/pages/cart.html" class="cart-link" id="nav-cart-btn" aria-label="View Shopping Cart">
+        <svg class="nav-cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="9" cy="21" r="1"></circle>
             <circle cx="20" cy="21" r="1"></circle>
             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
+        <span class="cart-badge" id="nav-cart-badge" style="display: none;">0</span>
     </a>
-    <button class="menu-bar">
-        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+
+    <button class="menu-bar" id="mobile-menu-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-drawer">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
     </button>
-   <div class="nav-btns">
+
+    <div class="nav-btns" id="nav-auth-btns">
         <a href="/pages/login.html" class="nav-btn login-btn">LOGIN</a>
         <a href="/pages/register.html" class="nav-btn register-btn">REGISTER</a>
-   </div>
+    </div>
 </nav>
+
+<div class="drawer-backdrop" id="drawer-backdrop" aria-hidden="true"></div>
+
+<aside class="mobile-drawer" id="mobile-drawer" aria-label="Mobile Navigation" aria-hidden="true">
+    <div class="drawer-header">
+        <a href="/" class="logo drawer-logo">FRET STORE</a>
+        <button type="button" class="drawer-close" id="drawer-close-btn" aria-label="Close navigation menu">&times;</button>
+    </div>
+
+    <div class="drawer-search-container">
+        <form class="drawer-search-form" id="drawer-search-form" role="search" onsubmit="event.preventDefault();">
+            <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="search" class="drawer-search-input" id="drawer-search-input" placeholder="Search instruments..." aria-label="Search instruments" autocomplete="off">
+        </form>
+    </div>
+
+    <nav class="drawer-nav">
+        <ul class="drawer-links">
+            <li><a href="/" data-category="all">HOME</a></li>
+            <li><a href="/pages/index.html?category=guitars" data-category="guitars">GUITARS</a></li>
+            <li><a href="/pages/index.html?category=accessories" data-category="accessories">ACCESSORIES</a></li>
+            <li><a href="/pages/index.html?category=amplifiers" data-category="amplifiers">AMPLIFIERS</a></li>
+            <li><a href="/pages/cart.html" class="drawer-cart-link">SHOPPING CART <span class="badge badge-crimson drawer-cart-badge" id="drawer-cart-badge" style="display: none;">0</span></a></li>
+        </ul>
+    </nav>
+
+    <div class="drawer-footer" id="drawer-auth-btns">
+        <a href="/pages/login.html" class="btn btn-outline btn-block">LOGIN</a>
+        <a href="/pages/register.html" class="btn btn-primary btn-block">CREATE ACCOUNT</a>
+    </div>
+</aside>

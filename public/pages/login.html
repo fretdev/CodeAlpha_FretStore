@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FRET STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <div class="auth-page-wrapper">
+            <div class="auth-card">
+                <div class="auth-header">
+                    <h1 class="auth-title">CUSTOMER LOGIN</h1>
+                    <p class="auth-subtitle">Access your Fret Store account and saved orders</p>
+                </div>
+
+                <div id="login-alert" class="alert alert-error" style="display: none;"></div>
+
+                <form id="login-form" novalidate>
+                    <div class="form-group">
+                        <label for="login-email" class="form-label">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="login-email" 
+                            class="form-input" 
+                            placeholder="name@example.com" 
+                            required 
+                            autocomplete="email"
+                        >
+                        <div class="form-error" id="email-error"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="login-password" class="form-label">Password</label>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            class="form-input" 
+                            placeholder="••••••••" 
+                            required 
+                            autocomplete="current-password"
+                        >
+                        <div class="form-error" id="password-error"></div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-submit-btn">
+                        LOG IN
+                    </button>
+                </form>
+
+                <div class="auth-footer">
+                    Don't have an account? <a href="/pages/register.html" class="auth-link">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/login.js"></script>
+</body>
+</html>

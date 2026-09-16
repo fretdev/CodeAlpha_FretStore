@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | FRET STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <div class="container" style="padding-top: var(--space-2xl); padding-bottom: var(--space-3xl);">
+            <div class="orders-page-header">
+                <h1>MY ORDERS</h1>
+                <p class="product-count" id="orders-subtitle">Track and view your recent purchases</p>
+            </div>
+
+            <div id="new-order-banner" class="alert alert-success" style="display: none; margin-bottom: var(--space-xl);">
+                <strong>Thank you for your order!</strong> Your order <span id="new-order-id"></span> has been placed successfully and is being prepared.
+            </div>
+
+            <div class="loading-wrapper" id="orders-loading">
+                <div class="spinner"></div>
+                <p>Retrieving your order history...</p>
+            </div>
+
+            <div class="empty-state" id="orders-auth-required" style="display: none;">
+                <h3 class="empty-title">Please Log In</h3>
+                <p class="empty-text">You need to be logged in to view your orders and track shipments.</p>
+                <a href="/pages/login.html?redirect=/pages/orders.html" class="btn btn-primary btn-lg">LOG IN TO ACCOUNT</a>
+            </div>
+
+            <div class="empty-state" id="orders-empty" style="display: none;">
+                <h3 class="empty-title">No Orders Placed Yet</h3>
+                <p class="empty-text">When you place orders on Fret Store, they will appear here with full tracking and item details.</p>
+                <a href="/" class="btn btn-accent btn-lg">EXPLORE INSTRUMENTS</a>
+            </div>
+
+            <div class="error-state" id="orders-error" style="display: none;">
+                <h3 class="error-title">Unable to Load Orders</h3>
+                <p class="error-text" id="orders-error-msg">A connection error occurred while retrieving your orders.</p>
+                <button type="button" class="btn btn-outline" id="orders-retry-btn">TRY AGAIN</button>
+            </div>
+
+            <div class="orders-list" id="orders-container" style="display: none;"></div>
+        </div>
+    </main>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/orders.js"></script>
+</body>
+</html>

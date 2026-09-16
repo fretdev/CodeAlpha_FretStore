@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | FRET STORE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div id="navbar"></div>
+
+    <main>
+        <div class="container" style="padding-top: var(--space-2xl); padding-bottom: var(--space-3xl);">
+            <div class="loading-wrapper" id="admin-auth-loading">
+                <div class="spinner"></div>
+                <p>Verifying administrative privileges...</p>
+            </div>
+
+            <div class="error-state" id="admin-access-denied" style="display: none;">
+                <h3 class="error-title">Access Denied</h3>
+                <p class="error-text">You do not have administrative permissions to view or manage the Fret Store console.</p>
+                <a href="/" class="btn btn-outline">RETURN TO STORE</a>
+            </div>
+
+            <div id="admin-main-interface" style="display: none;">
+                <div class="admin-header">
+                    <div>
+                        <h1>STORE MANAGEMENT CONSOLE</h1>
+                        <p class="product-count">Manage inventory, products, and customer orders</p>
+                    </div>
+                    <div id="admin-actions-bar">
+                        <button type="button" class="btn btn-primary" id="btn-open-create-product">
+                            + ADD NEW PRODUCT
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-tabs" role="tablist">
+                    <button type="button" class="admin-tab-btn active" id="tab-btn-products" data-tab="products">
+                        PRODUCTS &amp; INVENTORY
+                    </button>
+                    <button type="button" class="admin-tab-btn" id="tab-btn-orders" data-tab="orders">
+                        CUSTOMER ORDERS
+                    </button>
+                </div>
+
+                <section id="admin-products-view">
+                    <div class="table-responsive">
+                        <table class="admin-table" id="admin-products-table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>ID</th>
+                                    <th>Brand</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-products-tbody">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: var(--space-xl);">
+                                        Loading inventory...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section id="admin-orders-view" style="display: none;">
+                    <div class="table-responsive">
+                        <table class="admin-table" id="admin-orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-orders-tbody">
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: var(--space-xl);">
+                                        Loading orders...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="product-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="product-modal-title">ADD NEW PRODUCT</h3>
+                <button type="button" class="modal-close" id="product-modal-close">&times;</button>
+            </div>
+            <form id="product-modal-form">
+                <div class="modal-body">
+                    <div id="product-form-alert" class="alert alert-error" style="display: none;"></div>
+                    <input type="hidden" id="modal-product-id">
+
+                    <div class="form-group">
+                        <label for="modal-product-category" class="form-label">Category</label>
+                        <select id="modal-product-category" class="form-select" required>
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-product-brand" class="form-label">Brand</label>
+                        <input type="text" id="modal-product-brand" class="form-input" placeholder="e.g. Fender, Gibson, Ibanez" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-product-name" class="form-label">Product Name</label>
+                        <input type="text" id="modal-product-name" class="form-input" placeholder="e.g. Stratocaster Pro" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md);">
+                        <div class="form-group">
+                            <label for="modal-product-price" class="form-label">Price (₦)</label>
+                            <input type="number" id="modal-product-price" class="form-input" min="1" step="0.01" placeholder="850000" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="modal-product-stock" class="form-label">Stock Quantity</label>
+                            <input type="number" id="modal-product-stock" class="form-input" min="0" step="1" placeholder="10" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-product-image" class="form-label">Image URL</label>
+                        <input type="url" id="modal-product-image" class="form-input" placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="modal-product-desc" class="form-label">Description</label>
+                        <textarea id="modal-product-desc" class="form-textarea" placeholder="Detailed product specifications..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" id="product-modal-cancel">CANCEL</button>
+                    <button type="submit" class="btn btn-primary" id="product-modal-submit">SAVE PRODUCT</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="order-modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="order-modal-title">ORDER DETAILS</h3>
+                <button type="button" class="modal-close" id="order-modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="order-modal-body">
+                <div class="loading-wrapper"><div class="spinner"></div></div>
+            </div>
+            <div class="modal-footer" id="order-modal-footer">
+                <button type="button" class="btn btn-outline" id="order-modal-done">CLOSE</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="footer"></div>
+
+    <script type="module" src="/js/components.js"></script>
+    <script type="module" src="/js/admin.js"></script>
+</body>
+</html>
