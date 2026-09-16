@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <defs>
+    <linearGradient id="pickGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#241B18" />
+      <stop offset="50%" stop-color="#141414" />
+      <stop offset="100%" stop-color="#0A0A0A" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5A955" />
+      <stop offset="100%" stop-color="#C88A3D" />
+    </linearGradient>
+  </defs>
+
+  <!-- Guitar Pick Body -->
+  <path 
+    d="M 32 5 C 47 5 57 14 57 26 C 57 41 38 53 32 60 C 26 53 7 41 7 26 C 7 14 17 5 32 5 Z" 
+    fill="url(#pickGrad)" 
+    stroke="#C88A3D" 
+    stroke-width="2.5"
+    stroke-linejoin="round"
+  />
+
+  <!-- Subtle Inner Pick Accent Edge -->
+  <path 
+    d="M 32 8 C 44 8 53 15 53 26 C 53 39 37 49 32 55 C 27 49 11 39 11 26 C 11 15 20 8 32 8 Z" 
+    fill="none" 
+    stroke="rgba(200, 138, 61, 0.25)" 
+    stroke-width="1"
+  />
+
+  <!-- Stylized Fret "F" Emblem -->
+  <!-- Vertical Spine (Guitar Neck / Stem) -->
+  <rect x="21" y="16" width="6" height="28" rx="2" fill="url(#goldGrad)" />
+
+  <!-- Top Fret Arm -->
+  <rect x="21" y="16" width="22" height="6" rx="2" fill="url(#goldGrad)" />
+
+  <!-- Middle Fret Arm -->
+  <rect x="21" y="27" width="16" height="5.5" rx="2" fill="url(#goldGrad)" />
+
+  <!-- Tone Pearl / Inlay Dot -->
+  <circle cx="24" cy="38" r="1.5" fill="#F5F1E8" opacity="0.9" />
+</svg>
