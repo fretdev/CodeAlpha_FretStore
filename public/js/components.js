@@ -10,10 +10,19 @@ export async function initNavbar() {
         const html = await response.text();
         navbarEl.innerHTML = html;
 
-        setupMobileDrawer(navbarEl);
-        setupActiveNavLinks(navbarEl);
-        setupSearch(navbarEl);
-        await updateNavAuthState(navbarEl);
+        const backdrop = navbarEl.querySelector('#drawer-backdrop');
+        const drawer = navbarEl.querySelector('#mobile-drawer');
+        if (backdrop && backdrop.parentElement !== document.body) {
+            document.body.appendChild(backdrop);
+        }
+        if (drawer && drawer.parentElement !== document.body) {
+            document.body.appendChild(drawer);
+        }
+
+        setupMobileDrawer();
+        setupActiveNavLinks();
+        setupSearch();
+        await updateNavAuthState();
         await updateCartBadge();
     } catch (err) {
         console.error('Navbar initialization error:', err);
@@ -34,11 +43,11 @@ export async function initFooter() {
     }
 }
 
-function setupMobileDrawer(navbar) {
-    const menuToggle = navbar.querySelector('#mobile-menu-toggle');
-    const drawer = navbar.querySelector('#mobile-drawer');
-    const backdrop = navbar.querySelector('#drawer-backdrop');
-    const closeBtn = navbar.querySelector('#drawer-close-btn');
+function setupMobileDrawer() {
+    const menuToggle = document.getElementById('mobile-menu-toggle');
+    const drawer = document.getElementById('mobile-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const closeBtn = document.getElementById('drawer-close-btn');
 
     if (!menuToggle || !drawer || !backdrop) return;
 
@@ -89,12 +98,12 @@ function setupMobileDrawer(navbar) {
     });
 }
 
-function setupActiveNavLinks(navbar) {
+function setupActiveNavLinks() {
     const currentPath = window.location.pathname;
     const urlParams = new URLSearchParams(window.location.search);
     const currentCategory = urlParams.get('category')?.toLowerCase() || (currentPath === '/' || currentPath.endsWith('index.html') ? 'all' : '');
 
-    const allLinks = navbar.querySelectorAll('.nav-links a, .drawer-links a');
+    const allLinks = document.querySelectorAll('.nav-links a, .drawer-links a');
     allLinks.forEach(link => {
         const cat = link.dataset.category;
         if (cat && cat === currentCategory) {
@@ -105,11 +114,11 @@ function setupActiveNavLinks(navbar) {
     });
 }
 
-function setupSearch(navbar) {
-    const desktopSearch = navbar.querySelector('#nav-search-input');
-    const desktopForm = navbar.querySelector('#nav-search-form');
-    const drawerSearch = navbar.querySelector('#drawer-search-input');
-    const drawerForm = navbar.querySelector('#drawer-search-form');
+function setupSearch() {
+    const desktopSearch = document.getElementById('nav-search-input');
+    const desktopForm = document.getElementById('nav-search-form');
+    const drawerSearch = document.getElementById('drawer-search-input');
+    const drawerForm = document.getElementById('drawer-search-form');
 
     const urlParams = new URLSearchParams(window.location.search);
     const initialQuery = urlParams.get('search') || '';
@@ -150,8 +159,8 @@ function setupSearch(navbar) {
     if (drawerForm) {
         drawerForm.addEventListener('submit', () => {
             const query = drawerSearch ? drawerSearch.value.trim() : '';
-            const drawer = navbar.querySelector('#mobile-drawer');
-            const backdrop = navbar.querySelector('#drawer-backdrop');
+            const drawer = document.getElementById('mobile-drawer');
+            const backdrop = document.getElementById('drawer-backdrop');
             if (drawer) drawer.classList.remove('is-open');
             if (backdrop) backdrop.classList.remove('is-open');
             document.body.classList.remove('drawer-open');
@@ -160,10 +169,9 @@ function setupSearch(navbar) {
     }
 }
 
-export async function updateNavAuthState(navbar = document.getElementById('navbar')) {
-    if (!navbar) return;
-    const navBtns = navbar.querySelector('#nav-auth-btns');
-    const drawerAuthBtns = navbar.querySelector('#drawer-auth-btns');
+export async function updateNavAuthState() {
+    const navBtns = document.getElementById('nav-auth-btns');
+    const drawerAuthBtns = document.getElementById('drawer-auth-btns');
 
     if (!isAuthenticated()) {
         if (navBtns) {
@@ -204,7 +212,7 @@ export async function updateNavAuthState(navbar = document.getElementById('navba
         if (navBtns) navBtns.innerHTML = desktopBtnsHtml;
         if (drawerAuthBtns) drawerAuthBtns.innerHTML = drawerBtnsHtml;
 
-        const logoutBtn = navbar.querySelector('#logout-btn');
+        const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
                 authApi.logout();
@@ -212,7 +220,7 @@ export async function updateNavAuthState(navbar = document.getElementById('navba
             });
         }
 
-        const drawerLogoutBtn = navbar.querySelector('#drawer-logout-btn');
+        const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
         if (drawerLogoutBtn) {
             drawerLogoutBtn.addEventListener('click', () => {
                 authApi.logout();
