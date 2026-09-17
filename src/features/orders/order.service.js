@@ -164,11 +164,76 @@ export const getAdminOrderById = async (orderId)=>{
 }
 
 export const updateOrderStatus = async (orderId,status)=>{
-    const result = await pool.query(`
+    const client = await pool.connect()
+
+    try{
+        await client.query("BEGIN")
+
+        const orderResult = await client.query(`
+            SELECT status
+            FROM orders
+            WHERE id = $1
+            FOR UPDATE
+        `,[orderId])
+
+        const order = orderResult.rows[0]
+
+        if(!order){
+            await client.query("ROLLBACK")
+            return { found: false }
+        }
+
+        const allowedTransitions = {
+            pending: ["processing","cancelled"],
+            processing: ["shipped","cancelled"],
+            shipped: ["delivered"],
+            delivered: [],
+            cancelled: []
+        }
+
+        if(!allowedTransitions[order.status].includes(status)){
+            await client.query("ROLLBACK")
+
+            return {
+                found: true,
+                updated: false,
+                invalidTransition: true
+            }
+        }
+
+        if(status === "cancelled"){
+            const itemsResult = await client.query(`
+                SELECT product_id, quantity
+                FROM order_items
+                WHERE order_id = $1
+            `,[orderId])
+
+            for(const item of itemsResult.rows){
+                await client.query(`
+                    UPDATE products
+                    SET stock_quantity = stock_quantity + $1
+                    WHERE id = $2
+                `,[item.quantity,item.product_id])
+            }
+        }
+
+        await client.query(`
             UPDATE orders
             SET status = $1
-            WHERE orders.id = $2
+            WHERE id = $2
         `,[status,orderId])
 
-    return result.rowCount
+        await client.query("COMMIT")
+
+        return {
+            found: true,
+            updated: true
+        }
+
+    } catch(error){
+        await client.query("ROLLBACK")
+        throw error
+    } finally{
+        client.release()
+    }
 }
