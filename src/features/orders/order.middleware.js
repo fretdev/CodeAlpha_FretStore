@@ -4,7 +4,7 @@ export const validateUpdateOrderStatus = (req,res,next)=>{
     const result = updateOrderStatusSchema.safeParse(req.body)
 
     if(!result.success){
-        res.status(400).json({
+        return res.status(400).json({
             message: "Invalid status update",
             errors: result.error.issues
         })
