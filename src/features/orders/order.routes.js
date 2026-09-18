@@ -2,7 +2,7 @@ import Router from "express"
 import { authenticate } from "../../middleware/authenticate.js"
 import { authorize } from "../../middleware/authorize.js"
 import { validateOrderId,validateUpdateOrderStatus } from "./order.middleware.js"
-import { createOrderController,getOrderByIdController,getOrdersController,getAllOrdersController,getAdminOrderByIdController,updateOrderStatusController } from "./order.controller.js"
+import { createOrderController,getOrderByIdController,getOrdersController,getAllOrdersController,getAdminOrderByIdController,updateOrderStatusController, cancelOrderController } from "./order.controller.js"
 
 const router = Router()
 
@@ -30,6 +30,12 @@ router.patch("/admin/:id",
     validateOrderId,
     validateUpdateOrderStatus,
     updateOrderStatusController
+)
+
+router.patch("/:id/cancel",
+    authenticate,
+    validateOrderId,
+    cancelOrderController
 )
 
 router.get("/",

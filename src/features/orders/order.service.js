@@ -18,7 +18,7 @@ export const createOrder = async (userId) =>{
         const cartId = cartResult.rows[0].id
 
        const cartItemsResult = await client.query(`
-            SELECT cart_items.product_id,cart_items.quantity,products.name,products.price,products.stock_quantity
+            SELECT cart_items.product_id,cart_items.quantity,products.name,products.price
             FROM carts
             JOIN cart_items
                 ON carts.id = cart_items.cart_id
@@ -132,6 +132,7 @@ export const getAllOrders = async ()=>{
             FROM orders
             JOIN users
                 ON orders.user_id = users.id
+            ORDER BY orders.created_at DESC
         `)
     return result.rows
 }
@@ -162,25 +163,46 @@ export const getAdminOrderById = async (orderId)=>{
         items
     }
 }
+const restoreOrderStockAndCancel = async (client,orderId) =>{
+    const itemsResult = await client.query(`
+            SELECT product_id,quantity
+            FROM order_items
+            WHERE order_id = $1
+        `,[orderId])
+    
+        for(const item of itemsResult.rows){
+            await client.query(`
+                    UPDATE products
+                    SET stock_quantity = stock_quantity + $1
+                    WHERE id = $2
+                `,[item.quantity,item.product_id])
+        }
+        await client.query(`
+                UPDATE orders
+                SET status = 'cancelled'
+                WHERE id = $1
+            `,[orderId])
+}
 
 export const updateOrderStatus = async (orderId,status)=>{
     const client = await pool.connect()
-
     try{
-        await client.query("BEGIN")
+        await client.query('BEGIN')
 
         const orderResult = await client.query(`
-            SELECT status
-            FROM orders
-            WHERE id = $1
-            FOR UPDATE
-        `,[orderId])
+                SELECT status
+                FROM orders
+                WHERE id = $1
+                FOR UPDATE
+            `,[orderId])
 
         const order = orderResult.rows[0]
 
         if(!order){
             await client.query("ROLLBACK")
-            return { found: false }
+            return {
+                found: false
+            }
         }
 
         const allowedTransitions = {
@@ -201,35 +223,67 @@ export const updateOrderStatus = async (orderId,status)=>{
             }
         }
 
-        if(status === "cancelled"){
-            const itemsResult = await client.query(`
-                SELECT product_id, quantity
-                FROM order_items
-                WHERE order_id = $1
-            `,[orderId])
-
-            for(const item of itemsResult.rows){
-                await client.query(`
-                    UPDATE products
-                    SET stock_quantity = stock_quantity + $1
+       if(status === "cancelled"){
+            await restoreOrderStockAndCancel(client,orderId)
+       }else{
+            await client.query(`
+                    UPDATE orders
+                    SET status = $1
                     WHERE id = $2
-                `,[item.quantity,item.product_id])
-            }
-        }
-
-        await client.query(`
-            UPDATE orders
-            SET status = $1
-            WHERE id = $2
-        `,[status,orderId])
-
+                `,[status,orderId])
+       }
         await client.query("COMMIT")
 
         return {
             found: true,
             updated: true
         }
+    } catch(error){
+        await client.query("ROLLBACK")
+        throw error
+    } finally{
+        client.release()
+    }
+}
 
+export const cancelOrder = async (userId,orderId) =>{
+    const client = await pool.connect()
+
+    try{
+        await client.query("BEGIN")
+
+        const orderResult = await client.query(`
+                SELECT status
+                FROM orders
+                WHERE id = $1
+                AND user_id = $2
+                FOR UPDATE
+            `,[orderId,userId])
+
+        const order = orderResult.rows[0]
+
+        if(!order){
+            await client.query("ROLLBACK")
+            return {
+                found: false
+            }
+        }
+
+        if(order.status !== "pending"){
+            await client.query("ROLLBACK")
+            return {
+                found: true,
+                cancellable: false
+            }
+        }
+
+        await restoreOrderStockAndCancel(client,orderId)
+
+        await client.query("COMMIT")
+        return {
+            found: true,
+            cancellable: true
+        }
     } catch(error){
         await client.query("ROLLBACK")
         throw error

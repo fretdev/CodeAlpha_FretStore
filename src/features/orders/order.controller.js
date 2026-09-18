@@ -1,4 +1,4 @@
-import { createOrder, getOrdersByUserId, getOrderById, getAllOrders, getAdminOrderById, updateOrderStatus} from "./order.service.js";
+import { createOrder, getOrdersByUserId, getOrderById, getAllOrders, getAdminOrderById, updateOrderStatus,cancelOrder} from "./order.service.js";
 
 export const createOrderController = async (req,res)=>{
     try{
@@ -24,6 +24,35 @@ export const createOrderController = async (req,res)=>{
         }
         res.status(500).json({
             message: "Failed to create order"
+        })
+    }
+}
+
+export const cancelOrderController = async (req,res)=>{
+    try{
+        const userId = req.user.userId
+        const orderId = req.params.id
+
+        const result = await cancelOrder(userId,orderId)
+
+        if(!result.found){
+            return res.status(404).json({
+                message: "Order not found"
+            })
+        }
+        if(!result.cancellable){
+            return res.status(409).json({
+                message: "Order cannot be cancelled"
+            })
+        }
+
+        res.status(200).json({
+            message: "Order cancelled successfully"
+        })
+    } catch(error){
+        console.error("Failed to cancel order:",error.message)
+        res.status(500).json({
+            message: "Failed to cancel order"
         })
     }
 }
@@ -106,11 +135,16 @@ export const updateOrderStatusController = async (req,res)=>{
 
         const result = await updateOrderStatus(orderId,status)
 
-        if(result === 0){
-            return res.status(404).json({
-                message:"Order not found"
-            })
-        }
+       if(!result.found){
+        return res.status(404).json({
+            message: "Order not found"
+        })
+       }
+       if(result.invalidTransition){
+        return res.status(400).json({
+            message: "Invalid order status transition"
+        })
+       }
 
         res.status(200).json({
             message: "Order status updated successfully"
