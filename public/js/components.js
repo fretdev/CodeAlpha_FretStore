@@ -12,14 +12,19 @@ export async function initNavbar() {
 
         const backdrop = navbarEl.querySelector('#drawer-backdrop');
         const drawer = navbarEl.querySelector('#mobile-drawer');
+        const logoutModal = navbarEl.querySelector('#logout-modal');
         if (backdrop && backdrop.parentElement !== document.body) {
             document.body.appendChild(backdrop);
         }
         if (drawer && drawer.parentElement !== document.body) {
             document.body.appendChild(drawer);
         }
+        if (logoutModal && logoutModal.parentElement !== document.body) {
+            document.body.appendChild(logoutModal);
+        }
 
         setupMobileDrawer();
+        setupLogoutModal();
         setupActiveNavLinks();
         setupSearch();
         await updateNavAuthState();
@@ -96,6 +101,49 @@ function setupMobileDrawer() {
             closeDrawer();
         });
     });
+}
+
+function setupLogoutModal() {
+    const logoutModal = document.getElementById('logout-modal');
+    const closeBtn = document.getElementById('logout-modal-close');
+    const cancelBtn = document.getElementById('logout-modal-cancel');
+    const confirmBtn = document.getElementById('logout-modal-confirm');
+
+    if (!logoutModal) return;
+
+    const closeModal = () => {
+        logoutModal.style.display = 'none';
+        logoutModal.setAttribute('aria-hidden', 'true');
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+    if (confirmBtn) {
+        confirmBtn.addEventListener('click', () => {
+            closeModal();
+            authApi.logout();
+            window.location.href = '/pages/login.html';
+        });
+    }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === logoutModal) closeModal();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && logoutModal.style.display !== 'none') {
+            closeModal();
+        }
+    });
+}
+
+function openLogoutModal() {
+    const logoutModal = document.getElementById('logout-modal');
+    if (logoutModal) {
+        logoutModal.style.display = 'flex';
+        logoutModal.setAttribute('aria-hidden', 'false');
+    }
 }
 
 function setupActiveNavLinks() {
@@ -215,16 +263,19 @@ export async function updateNavAuthState() {
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', () => {
-                authApi.logout();
-                window.location.href = '/pages/login.html';
+                openLogoutModal();
             });
         }
 
         const drawerLogoutBtn = document.getElementById('drawer-logout-btn');
         if (drawerLogoutBtn) {
             drawerLogoutBtn.addEventListener('click', () => {
-                authApi.logout();
-                window.location.href = '/pages/login.html';
+                const drawer = document.getElementById('mobile-drawer');
+                const backdrop = document.getElementById('drawer-backdrop');
+                if (drawer) drawer.classList.remove('is-open');
+                if (backdrop) backdrop.classList.remove('is-open');
+                document.body.classList.remove('drawer-open');
+                openLogoutModal();
             });
         }
     } catch (err) {

@@ -1,4 +1,4 @@
-import { ordersApi, formatPrice, formatDate, isAuthenticated, showToast, escapeHtml } from './api.js';
+import { ordersApi, formatPrice, formatDate, formatOrderId, isAuthenticated, showToast, escapeHtml } from './api.js';
 
 let myOrders = [];
 const orderDetailsCache = new Map();
@@ -22,7 +22,7 @@ async function initOrdersPage() {
     const urlParams = new URLSearchParams(window.location.search);
     const newOrderId = urlParams.get('orderId');
     if (newOrderId && newOrderBannerEl) {
-        if (newOrderIdEl) newOrderIdEl.textContent = `#${newOrderId}`;
+        if (newOrderIdEl) newOrderIdEl.textContent = formatOrderId(newOrderId);
         newOrderBannerEl.style.display = 'block';
     }
 
@@ -71,7 +71,7 @@ function renderOrders() {
                 <article class="order-card" id="order-card-${order.id}">
                     <div class="order-header">
                         <div class="order-id-date">
-                            <span class="order-id">ORDER #${order.id}</span>
+                            <span class="order-id">${formatOrderId(order.id)}</span>
                             <span class="order-date">${formatDate(order.created_at)}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
@@ -116,7 +116,8 @@ function renderOrders() {
 }
 
 async function handleCancelOrder(orderId, btn) {
-    if (!confirm(`Are you sure you want to cancel Order #${orderId}?`)) {
+    const formattedId = formatOrderId(orderId);
+    if (!confirm(`Are you sure you want to cancel order ${formattedId}?`)) {
         return;
     }
 
@@ -125,7 +126,7 @@ async function handleCancelOrder(orderId, btn) {
 
     try {
         await ordersApi.cancel(orderId);
-        showToast(`Order #${orderId} cancelled successfully.`, 'success');
+        showToast(`Order ${formattedId} cancelled successfully.`, 'success');
 
         const order = myOrders.find(o => o.id === orderId);
         if (order) {
@@ -228,7 +229,6 @@ function renderOrderItems(container, orderData) {
                     <div class="order-item-row">
                         <div>
                             <strong style="color: var(--color-text);">${escapeHtml(item.product_name || 'Instrument')}</strong>
-                            <div style="font-size: 0.8rem; color: var(--color-text-dim);">Item ID: #${item.product_id}</div>
                         </div>
                         <div style="text-align: right;">
                             <span style="color: var(--color-text); font-weight: 600;">${formatPrice(subtotal)}</span>

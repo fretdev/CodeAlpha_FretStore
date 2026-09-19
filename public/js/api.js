@@ -119,6 +119,15 @@ export function formatPrice(amount) {
     });
 }
 
+export function formatOrderId(id) {
+    if (id === null || id === undefined || id === '') return '';
+    const num = Number(id);
+    if (!isNaN(num)) {
+        return `FRT-${String(num).padStart(4, '0')}`;
+    }
+    return `FRT-${String(id).padStart(4, '0')}`;
+}
+
 export function formatDate(dateString) {
     if (!dateString) return '';
     const date = new Date(dateString);

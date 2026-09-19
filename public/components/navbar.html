@@ -72,3 +72,24 @@
         <a href="/pages/register.html" class="btn btn-primary btn-block">CREATE ACCOUNT</a>
     </div>
 </aside>
+
+<div class="modal-overlay" id="logout-modal" style="display: none;" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="logout-modal-title">
+    <div class="modal-content" style="max-width: 460px;">
+        <div class="modal-header">
+            <h3 class="modal-title" id="logout-modal-title">LOG OUT?</h3>
+            <button type="button" class="modal-close" id="logout-modal-close" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p style="color: var(--color-text); font-size: 1.05rem; font-weight: 500; margin-bottom: var(--space-xs);">
+                Are you sure you want to log out?
+            </p>
+            <p style="color: var(--color-text-dim); font-size: 0.9rem; line-height: 1.5;">
+                You’ll need to sign in again to access your FretStore account.
+            </p>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-outline" id="logout-modal-cancel">CANCEL</button>
+            <button type="button" class="btn btn-danger" id="logout-modal-confirm">LOG OUT</button>
+        </div>
+    </div>
+</div>
