@@ -104,6 +104,7 @@ export const ordersApi = {
     create: () => request('/orders', { method: 'POST' }),
     getMyOrders: () => request('/orders', { method: 'GET' }),
     getMyOrderById: (id) => request(`/orders/${id}`, { method: 'GET' }),
+    cancel: (id) => request(`/orders/${id}/cancel`, { method: 'PATCH' }),
     getAdminAllOrders: () => request('/orders/admin', { method: 'GET' }),
     getAdminOrderById: (id) => request(`/orders/admin/${id}`, { method: 'GET' }),
     updateAdminOrderStatus: (id, status) => request(`/orders/admin/${id}`, { method: 'PATCH', body: { status } })

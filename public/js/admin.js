@@ -363,6 +363,14 @@ function renderOrdersTable() {
     });
 }
 
+const ALLOWED_ORDER_TRANSITIONS = {
+    pending: ['processing', 'cancelled'],
+    processing: ['shipped', 'cancelled'],
+    shipped: ['delivered'],
+    delivered: [],
+    cancelled: []
+};
+
 async function openManageOrderModal(orderId) {
     orderModal.style.display = 'flex';
     orderModalBody.innerHTML = '<div class="loading-wrapper"><div class="spinner"></div><p>Loading order details...</p></div>';
@@ -371,34 +379,48 @@ async function openManageOrderModal(orderId) {
         const data = await ordersApi.getAdminOrderById(orderId);
         const order = data.order || {};
         const items = data.items || [];
-
-        const statuses = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+        const currentStatus = (order.status || 'pending').toLowerCase();
+        const allowedTransitions = ALLOWED_ORDER_TRANSITIONS[currentStatus] || [];
 
         orderModalBody.innerHTML = `
             <div style="margin-bottom: var(--space-md); border-bottom: 1px solid var(--color-border); padding-bottom: var(--space-md);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs); flex-wrap: wrap; gap: var(--space-xs);">
                     <h4 style="font-size: 1.25rem;">ORDER #${order.id}</h4>
-                    <span>${formatDate(order.created_at)}</span>
+                    <span style="font-size: 0.85rem; color: var(--color-text-dim);">${formatDate(order.created_at)}</span>
                 </div>
                 <div style="font-size: 0.9rem; color: var(--color-text-muted);">
                     <strong>Customer:</strong> ${escapeHtml(order.username || 'N/A')} (${escapeHtml(order.email || 'N/A')})
                 </div>
             </div>
 
-            <div style="margin-bottom: var(--space-md);">
-                <label for="order-status-select" class="form-label">Update Order Status:</label>
-                <div style="display: flex; gap: var(--space-sm); align-items: center;">
-                    <select id="order-status-select" class="form-select" style="max-width: 240px;">
-                        ${statuses.map(s => `
-                            <option value="${s}" ${order.status === s ? 'selected' : ''}>
-                                ${s.toUpperCase()}
-                            </option>
-                        `).join('')}
-                    </select>
-                    <button type="button" class="btn btn-primary btn-sm" id="btn-update-status" data-id="${order.id}">
-                        UPDATE STATUS
-                    </button>
+            <div style="margin-bottom: var(--space-md); padding: var(--space-md); background: var(--color-surface-light); border: 1px solid var(--color-border); border-radius: var(--radius-sm);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-xs); flex-wrap: wrap; gap: var(--space-xs);">
+                    <span class="form-label" style="margin-bottom: 0;">Current Status:</span>
+                    <span id="modal-order-current-badge">${getStatusBadge(currentStatus)}</span>
                 </div>
+                ${allowedTransitions.length > 0 ? `
+                    <div style="margin-top: var(--space-sm);">
+                        <label for="order-status-select" class="form-label">Change Status To:</label>
+                        <div style="display: flex; gap: var(--space-sm); align-items: center; flex-wrap: wrap;">
+                            <select id="order-status-select" class="form-select" style="max-width: 240px;">
+                                <option value="" disabled selected>Select next status...</option>
+                                ${allowedTransitions.map(s => `
+                                    <option value="${s}">
+                                        ${s.toUpperCase()}
+                                    </option>
+                                `).join('')}
+                            </select>
+                            <button type="button" class="btn btn-primary btn-sm" id="btn-update-status" data-id="${order.id}">
+                                UPDATE STATUS
+                            </button>
+                        </div>
+                        <div id="order-status-error" class="form-error" style="display: none; margin-top: var(--space-xs);"></div>
+                    </div>
+                ` : `
+                    <div style="margin-top: var(--space-xs); font-size: 0.85rem; color: var(--color-text-dim);">
+                        This order is in a terminal state (${currentStatus.toUpperCase()}) and cannot be transitioned further.
+                    </div>
+                `}
             </div>
 
             <h5 style="font-size: 1.1rem; margin-top: var(--space-md); margin-bottom: var(--space-xs);">ITEMIZED BREAKDOWN</h5>
@@ -437,23 +459,48 @@ async function openManageOrderModal(orderId) {
 
         const updateStatusBtn = document.getElementById('btn-update-status');
         const statusSelect = document.getElementById('order-status-select');
+        const statusErrorEl = document.getElementById('order-status-error');
 
-        updateStatusBtn.addEventListener('click', async () => {
-            const newStatus = statusSelect.value;
-            updateStatusBtn.disabled = true;
-            updateStatusBtn.textContent = 'UPDATING...';
+        if (updateStatusBtn && statusSelect) {
+            updateStatusBtn.addEventListener('click', async () => {
+                const newStatus = statusSelect.value;
+                if (!newStatus) {
+                    if (statusErrorEl) {
+                        statusErrorEl.textContent = 'Please select a new status.';
+                        statusErrorEl.style.display = 'block';
+                    }
+                    return;
+                }
 
-            try {
-                await ordersApi.updateAdminOrderStatus(order.id, newStatus);
-                showToast(`Order #${order.id} status updated to ${newStatus.toUpperCase()}`, 'success');
-                await loadOrders();
-                closeOrderModal();
-            } catch (statusErr) {
-                showToast(statusErr.message || 'Failed to update order status', 'error');
-                updateStatusBtn.disabled = false;
-                updateStatusBtn.textContent = 'UPDATE STATUS';
-            }
-        });
+                if (statusErrorEl) {
+                    statusErrorEl.textContent = '';
+                    statusErrorEl.style.display = 'none';
+                }
+
+                updateStatusBtn.disabled = true;
+                updateStatusBtn.textContent = 'UPDATING...';
+
+                try {
+                    await ordersApi.updateAdminOrderStatus(order.id, newStatus);
+                    showToast(`Order #${order.id} status updated to ${newStatus.toUpperCase()}`, 'success');
+                    
+                    const foundOrder = orders.find(o => o.id === order.id);
+                    if (foundOrder) {
+                        foundOrder.status = newStatus;
+                    }
+                    renderOrdersTable();
+                    await openManageOrderModal(order.id);
+                } catch (statusErr) {
+                    showToast(statusErr.message || 'Failed to update order status', 'error');
+                    if (statusErrorEl) {
+                        statusErrorEl.textContent = statusErr.message || 'Failed to update order status';
+                        statusErrorEl.style.display = 'block';
+                    }
+                    updateStatusBtn.disabled = false;
+                    updateStatusBtn.textContent = 'UPDATE STATUS';
+                }
+            });
+        }
     } catch (err) {
         orderModalBody.innerHTML = `
             <p class="form-error">Failed to load order details: ${escapeHtml(err.message)}</p>

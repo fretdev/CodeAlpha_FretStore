@@ -1,4 +1,4 @@
-import { ordersApi, formatPrice, formatDate, isAuthenticated, escapeHtml } from './api.js';
+import { ordersApi, formatPrice, formatDate, isAuthenticated, showToast, escapeHtml } from './api.js';
 
 let myOrders = [];
 const orderDetailsCache = new Map();
@@ -62,6 +62,11 @@ function renderOrders() {
     if (ordersContainerEl) {
         ordersContainerEl.innerHTML = myOrders.map(order => {
             const statusBadge = getStatusBadge(order.status);
+            const isPending = (order.status || '').toLowerCase() === 'pending';
+            const cancelBtnHtml = isPending 
+                ? `<button type="button" class="btn btn-danger btn-sm cancel-order-btn" data-id="${order.id}">CANCEL ORDER</button>` 
+                : '';
+
             return `
                 <article class="order-card" id="order-card-${order.id}">
                     <div class="order-header">
@@ -69,11 +74,14 @@ function renderOrders() {
                             <span class="order-id">ORDER #${order.id}</span>
                             <span class="order-date">${formatDate(order.created_at)}</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: var(--space-md);">
-                            ${statusBadge}
-                            <button type="button" class="btn btn-outline btn-sm toggle-details-btn" data-id="${order.id}">
-                                VIEW DETAILS
-                            </button>
+                        <div style="display: flex; align-items: center; gap: var(--space-md); flex-wrap: wrap;">
+                            <span id="order-status-badge-${order.id}">${statusBadge}</span>
+                            <div id="order-actions-${order.id}" style="display: flex; align-items: center; gap: var(--space-xs);">
+                                ${cancelBtnHtml}
+                                <button type="button" class="btn btn-outline btn-sm toggle-details-btn" data-id="${order.id}">
+                                    VIEW DETAILS
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="order-body">
@@ -91,12 +99,77 @@ function renderOrders() {
             `;
         }).join('');
 
+        ordersContainerEl.querySelectorAll('.cancel-order-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = Number(btn.dataset.id);
+                handleCancelOrder(id, btn);
+            });
+        });
+
         ordersContainerEl.querySelectorAll('.toggle-details-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = Number(btn.dataset.id);
                 toggleOrderDetails(id, btn);
             });
         });
+    }
+}
+
+async function handleCancelOrder(orderId, btn) {
+    if (!confirm(`Are you sure you want to cancel Order #${orderId}?`)) {
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'CANCELLING...';
+
+    try {
+        await ordersApi.cancel(orderId);
+        showToast(`Order #${orderId} cancelled successfully.`, 'success');
+
+        const order = myOrders.find(o => o.id === orderId);
+        if (order) {
+            order.status = 'cancelled';
+        }
+        if (orderDetailsCache.has(orderId)) {
+            const cached = orderDetailsCache.get(orderId);
+            if (cached) cached.status = 'cancelled';
+        }
+
+        const badgeContainer = document.getElementById(`order-status-badge-${orderId}`);
+        if (badgeContainer) {
+            badgeContainer.innerHTML = getStatusBadge('cancelled');
+        }
+
+        btn.remove();
+    } catch (err) {
+        showToast(err.message || 'Failed to cancel order', 'error');
+
+        if (err.status === 409 || (err.message && err.message.toLowerCase().includes('cannot be cancelled'))) {
+            try {
+                const updatedOrder = await ordersApi.getMyOrderById(orderId);
+                if (updatedOrder) {
+                    const order = myOrders.find(o => o.id === orderId);
+                    if (order) order.status = updatedOrder.status;
+                    const badgeContainer = document.getElementById(`order-status-badge-${orderId}`);
+                    if (badgeContainer) {
+                        badgeContainer.innerHTML = getStatusBadge(updatedOrder.status);
+                    }
+                    if (updatedOrder.status !== 'pending') {
+                        btn.remove();
+                    } else {
+                        btn.disabled = false;
+                        btn.textContent = 'CANCEL ORDER';
+                    }
+                }
+            } catch {
+                btn.disabled = false;
+                btn.textContent = 'CANCEL ORDER';
+            }
+        } else {
+            btn.disabled = false;
+            btn.textContent = 'CANCEL ORDER';
+        }
     }
 }
 
